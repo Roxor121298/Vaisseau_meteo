@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <!-- Les deux bundle sont deja setups -->
+        <!-- un bundle pour météo.html (page-météo.js) et un pour l'index.html (page-index.js) -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Accueil</title>
+        <script src="dist/index.js"></script>
+        <link rel="stylesheet" href="css/global.css">
+        <link rel="icon" href="img/favicon.png" type="image/png" />
+    </head>
+    <body id="acceuil">
+        <form action="meteo.html" method="post" id="form">
+            <div class="d-none" id="error-message" >
+                Welcome to Beeg bug !! 
+            </div>
+            <input type="text" name="noms" id="noms" placeholder="Votre noms" value="">
+            <input type="password" name="password" id="password" placeholder="Mot de passe">
+            <select name="niveau" id="niveaux">
+                <option>Printemps</option>
+                <option>Hivers</option>
+                <option>Automne</option>
+            </select>
+            <button type="submit" >Entrer</button>
+        </form>
+    </body>
+</html>
