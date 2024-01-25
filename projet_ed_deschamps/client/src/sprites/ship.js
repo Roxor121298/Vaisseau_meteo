@@ -96,9 +96,16 @@ export class Ship {
         })
 
         // pour tirer ici
+        // pour que ca arrete de selectionner jai donenr l'option d"utiliser le e ou le click gauche de la souris
 
-        document.addEventListener("click", e => {
-            this.bambam()
+        // document.addEventListener("click", e => {
+        //     this.bambam()
+        // })
+
+        document.addEventListener("keyup", e => {
+            if (e.key.toLowerCase() == "e"){
+                this.bambam()
+            }
         })
 
     }

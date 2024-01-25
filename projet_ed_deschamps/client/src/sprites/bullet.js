@@ -99,7 +99,8 @@ export class Bullet{
         let angle = getElementAngle(this.currentPosX, this.currentPosY, this.cibleX, this.cibleY)
 		rotateElement(this.node, (angle))
 
-        if(Math.abs(this.cibleX - this.currentPosX) < 20 && Math.abs(this.cibleY - this.currentPosY) < 20){
+        // jai mit 25 mais il sagit d'une valeur arbittraire afin que la collison soit faciliter
+        if(Math.abs(this.cibleX - this.currentPosX) < 15 && Math.abs(this.cibleY - this.currentPosY) < 15){
             this.cible_atteinte()
         }
     }

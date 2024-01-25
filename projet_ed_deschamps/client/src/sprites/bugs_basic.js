@@ -77,11 +77,11 @@ export class Evilbug {
 	}
 
 	collision() {
-		console.log(bulletsList);
+		// console.log(bulletsList);
 		for (let i = 0; i < bulletsList.length; i++) {
-			console.log("pass");
 			const uneBalle = bulletsList[i];
-			if (Math.abs(this.currentPosX - uneBalle.currentPosX) < 50 && Math.abs(this.currentPosY - uneBalle.currentPosY) < 50) {
+			// jai mit 35 mais il sagit d'une valeur arbittraire afin que la collison soit faciliter
+			if (Math.abs(this.currentPosX - uneBalle.currentPosX) < 35 && Math.abs(this.currentPosY - uneBalle.currentPosY) < 35) {
 				uneBalle.cible_atteinte();
 				this.balle_atteinte();
 			}

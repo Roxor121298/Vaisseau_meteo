@@ -8,6 +8,11 @@ import {Evilbug} from './sprites/bugs_basic'
 
 import {Ship} from './sprites/ship'
 
+// menu pour la temperature ou revenir a la page d'index
+
+let menu
+// pour la meteo specifiquement
+let menuMeteo
 
 // Vaisseau du jouet et variable buffer lui étant attribué (je l'ai jamais utilisé peut être mais elle est là au cas ou)
 let bufferXY
@@ -41,7 +46,36 @@ window.addEventListener("load", async () => {
     weatherData3 = await fetchData(-41.2865,174.7762) // Wellington Nouvelle zélande (thème automne)
     //console.log(weatherData)
     creerNiveau()
+    creerMenu()
 })
+
+//Reminder comment utiliser weatherData
+
+        // Printemps
+        // {time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain), temperature: -13, apparentTemperature: -17, isDay: 0, precipitation: 0, …}
+        // apparentTemperature: -17
+        // isDay: 0
+        // precipitation: 0
+        // rain: 0
+        // showers: 0
+        // snowfall: 0
+        // temperature: -13
+        // time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain)
+        // windSpeed10m: 2
+        // [[Prototype]]: Object
+
+
+const creerMenu = () => {
+    menu = document.querySelector("#menu_container")
+    let meteo = currentWeather
+
+    menuMeteo = document.createElement("div")
+    menuMeteo.classList.add("meteo")
+
+    menuMeteo.textContent += "La meteo temperature en celsius est de : " + meteo.temperature 
+
+    menu.appendChild(menuMeteo)
+}
 
 // Ici création initiale du niveau puis lancement du premier tick
 const creerNiveau = () => {
@@ -105,7 +139,7 @@ const spawnBug = () => {
 
     allBugs.push(new Evilbug(x,y,skin))
 
-    setTimeout(spawnBug, 1000)
+    setTimeout(spawnBug, 3000)
 }
 
 const tick = () => {
@@ -154,12 +188,13 @@ const gameOn = () => {
     document.onkeydown = (event) => {
         if (event.code === "ArrowUp") {
             currentWeather.apparentTemperature +=5
+            menuMeteo.textContent = "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature
             console.log("La température monte!! : " + currentWeather.apparentTemperature);
             
         }
         if (event.code === "ArrowDown") {
-            
             currentWeather.apparentTemperature -=5
+            menuMeteo.textContent = "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature
             console.log("La température descend!! : " + currentWeather.apparentTemperature);
         }
     }
