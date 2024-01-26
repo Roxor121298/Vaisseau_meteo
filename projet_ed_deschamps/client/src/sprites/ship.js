@@ -28,22 +28,13 @@ export class Ship {
         shipPosX = x
         shipPosY = y
 
-        //peut etre mettre une velocité au ship aussi demain serait cool
-
-        // this.velocityX = 0
-		// this.velocityY = 0
-
-		// this.velocityBoost = 0.2
-
-		// this.maxVelocityX = 8
-		// this.maxVelocityY = 8
-
-        // Les attribut de display du vaisseau
+        // Les attributs d'affichage
 
         this.node = document.createElement('img')
         
         this.node.style.width = '100px'
         this.node.style.height = '100px'
+        // je voulais faire des collision avec le vaisseau mais fnl je ne l'ai pas fait
         this.node.src = "./img/ship/ship_fullHealth.png"
 
         this.node.style.position = 'absolute'
@@ -52,25 +43,23 @@ export class Ship {
 
         document.body.appendChild(this.node)
 
-        // document.addEventListener('keydown', (event) => this.moveShip(event));
-
         // Pour bouger de droite a gauche ici
 
         document.addEventListener("keydown", e => {
             if (event.key.toLowerCase() == "a") {
-                this.leftArrowOn = true;
+                this.leftArrowOn = true
             }
             else if (event.key.toLowerCase() == "d") {
-                this.rightArrowOn = true;
+                this.rightArrowOn = true
             }
         })
         
         document.addEventListener("keyup", e => {
             if (event.key.toLowerCase() == "a"){
-                this.leftArrowOn = false;
+                this.leftArrowOn = false
             }
             else if (event.key.toLowerCase() == "d") {
-                this.rightArrowOn = false;
+                this.rightArrowOn = false
             }
         })
         
@@ -96,19 +85,87 @@ export class Ship {
         })
 
         // pour tirer ici
-        // pour que ca arrete de selectionner jai donenr l'option d"utiliser le e ou le click gauche de la souris
 
         // document.addEventListener("click", e => {
-        //     this.bambam()
+        //     e.preventDefault()
+        //     this.tire_Missile_chaud()
         // })
+
+        // document.addEventListener("contextmenu", e => {
+        //     e.preventDefault()
+        //     this.tire_Boule_de_froid()
+        // })
+
+        // Si tu veut mettre "q" et "e" a la place des clic de souris pour tirer tes missilechaud ou tes boule de froid
 
         document.addEventListener("keyup", e => {
             if (e.key.toLowerCase() == "e"){
-                this.bambam()
+                this.tire_Boule_de_froid()
+            }
+        })
+
+                document.addEventListener("keyup", e => {
+            if (e.key.toLowerCase() == "q"){
+                this.tire_Missile_chaud()
             }
         })
 
     }
+
+    // VERSION Finale de fonction pour bouger le vaisseau
+
+    moveShip() {
+        const shipWidth = this.node.offsetWidth;
+        const shipHeight = this.node.offsetHeight;
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+    
+        if(this.leftArrowOn && shipPosX > 0) {
+            shipPosX = Math.max(0, shipPosX - this.moveStep);
+        }
+        if(this.rightArrowOn && shipPosX < windowWidth - shipWidth) {
+            shipPosX = Math.min(windowWidth - shipWidth, shipPosX + this.moveStep);
+        }
+    
+        if(this.upArrowOn && shipPosY > 0) {
+            shipPosY = Math.max(0, shipPosY - this.moveStep);
+        }
+        if(this.downArrowOn && shipPosY < windowHeight - shipHeight) {
+            shipPosY = Math.min(windowHeight - shipHeight, shipPosY + this.moveStep);
+        }
+    
+        this.node.style.left = shipPosX + "px";
+        this.node.style.top = shipPosY + "px";
+    }
+    
+
+    // tick du vaisseau qui le bouge puis le pointe vers ou la souris pointe a ce moment
+    tick() {
+        this.moveShip()
+		let angle = getElementAngle(shipPosX, shipPosY, xChase, yChase);
+		rotateElement(this.node, (angle));
+	}
+
+    // fonction pour créer une missile qui va chaser la position du clic, 
+        // indiceChaleur pour l'incrément de chaleur quand il explose
+        // colPourSpritesheet pour le bon nombre de colonne pour le spritesheet
+    tire_Missile_chaud() {
+        let indiceChaleur = 1
+        let colPourSpritesheet = 3
+        bulletsList.push(new Bullet(xChase,yChase,"./img/bullets/missile_chaud.png",indiceChaleur,colPourSpritesheet))
+    }
+
+    // Meme chose que tire_Missile_chaud() mais pour les boule_de_froid
+    tire_Boule_de_froid() {
+        let indiceChaleur = -1
+        let colPourSpritesheet = 10
+        bulletsList.push(new Bullet(xChase,yChase,"./img/bullets/boule_froid.png",indiceChaleur,colPourSpritesheet))
+    }
+
+}
+
+// PREMIERE FONCTION POUR BOUGER LE VAISSEAU
+
 
     // bouger(){
     //     //on va chercher la taille du background
@@ -147,55 +204,7 @@ export class Ship {
     // }
 
 
-    // VERSION AMÉLIORER DE BOUGER()
-
-    brrbrr() {
-        const shipWidth = this.node.offsetWidth;
-        const shipHeight = this.node.offsetHeight;
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-    
-        if(this.leftArrowOn && shipPosX > 0) {
-            shipPosX = Math.max(0, shipPosX - this.moveStep);
-        }
-        if(this.rightArrowOn && shipPosX < windowWidth - shipWidth) {
-            shipPosX = Math.min(windowWidth - shipWidth, shipPosX + this.moveStep);
-        }
-    
-        if(this.upArrowOn && shipPosY > 0) {
-            shipPosY = Math.max(0, shipPosY - this.moveStep);
-        }
-        if(this.downArrowOn && shipPosY < windowHeight - shipHeight) {
-            shipPosY = Math.min(windowHeight - shipHeight, shipPosY + this.moveStep);
-        }
-    
-        this.node.style.left = shipPosX + "px";
-        this.node.style.top = shipPosY + "px";
-    }
-    
-
-    tick() {
-        this.brrbrr()
-
-		//this.node.style.left = this.currentPosX + "px";
-		//this.node.style.top = this.currentPosY + "px";
-
-		let angle = getElementAngle(shipPosX, shipPosY, xChase, yChase);
-		rotateElement(this.node, (angle));
-	}
-
-    bambam() {
-        let tirX = xChase
-        let tirY = yChase
-
-        bulletsList.push(new Bullet(xChase,yChase))
-
-    }
-
-}
-
-
-    //Autre algorithmne que javais fait avant pour bouger le vaisseau
+// DEUXIEME FONCTIONS POUR FAIRE BOUGER VAISSEAU
 
     // Je le gardde pour les note de supdate Position
 

@@ -4,7 +4,7 @@ import { fetchData } from "./meteo-api"
 import { chooseLvl } from "./util"
 
 // Pour la class EvilBug qui poursuit la souris ()
-import {Evilbug} from './sprites/bugs_basic'
+import {Evilbug, BigBeaver} from './sprites/bugs_basic'
 
 import {Ship} from './sprites/ship'
 
@@ -23,6 +23,10 @@ export let bulletsList = []
 
 //liste des bugs qui chase le joueurs
 export let allBugs = []
+let beaver = 0
+export const setBeaver = (e) => {
+    beaver = e
+}
 
 
 // valeur string du niveau de jeu (pas == a la classe mais aun nom (Primtemps, Hivers, Automne))
@@ -49,22 +53,6 @@ window.addEventListener("load", async () => {
     creerMenu()
 })
 
-//Reminder comment utiliser weatherData
-
-        // Printemps
-        // {time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain), temperature: -13, apparentTemperature: -17, isDay: 0, precipitation: 0, …}
-        // apparentTemperature: -17
-        // isDay: 0
-        // precipitation: 0
-        // rain: 0
-        // showers: 0
-        // snowfall: 0
-        // temperature: -13
-        // time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain)
-        // windSpeed10m: 2
-        // [[Prototype]]: Object
-
-
 const creerMenu = () => {
     menu = document.querySelector("#menu_container")
     let meteo = currentWeather
@@ -72,7 +60,7 @@ const creerMenu = () => {
     menuMeteo = document.createElement("div")
     menuMeteo.classList.add("meteo")
 
-    menuMeteo.textContent += "La meteo temperature en celsius est de : " + meteo.temperature 
+    menuMeteo.textContent += "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature 
 
     menu.appendChild(menuMeteo)
 }
@@ -83,9 +71,7 @@ const creerNiveau = () => {
     let bgVal = getNiveau(lvlVal)
     let background = document.createElement("img")
     background.classList.add(bgVal)
-
     document.body.appendChild(background)
-
     mainShip = new Ship(60,60)
     spawnBug()
     tick()
@@ -93,7 +79,7 @@ const creerNiveau = () => {
 }
 
 
-// pour get le bon niveau (séparer pour s on voudrait changer in game plus tard)
+// pour get la bonne images de background
 const getNiveau = (lvlVal) => {
     //console.log(lvlVal)
     let rep = "background1"
@@ -109,37 +95,28 @@ const getNiveau = (lvlVal) => {
     return rep
 }
 
-//Reminder comment utiliser weatherData
-
-        // Printemps
-        // {time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain), temperature: -13, apparentTemperature: -17, isDay: 0, precipitation: 0, …}
-        // apparentTemperature: -17
-        // isDay: 0
-        // precipitation: 0
-        // rain: 0
-        // showers: 0
-        // snowfall: 0
-        // temperature: -13
-        // time: Tue Jan 23 2024 15:30:00 GMT-0500 (heure normale de l’Est nord-américain)
-        // windSpeed10m: 2
-        // [[Prototype]]: Object
+// J'ai fait cette fonction vendredi 10h30 pour ajouté un autre événement de température
+const spawBeaver = () => {
+    let y = Math.floor(Math.random() * 100)
+    beaver = new BigBeaver(0,45)
+}
 
 
-//tick de jeu ("main" tick)
-
+// fonction ajoute périodiquement des bug a la list allBugs
 const spawnBug = () => {
+
+    if((currentWeather.snowfall ==  1) && (beaver == 0)){
+        spawBeaver()
+    }
 
     let x = Math.floor((Math.random() * 70) + 10)
     let y = Math.floor(Math.random() * 100)
-
-    //console.log("Positions x et y : " + x + " , " + y)
-
 
     let skin = weatherMinion()
 
     allBugs.push(new Evilbug(x,y,skin))
 
-    setTimeout(spawnBug, 3000)
+    setTimeout(spawnBug, 2000)
 }
 
 const tick = () => {
@@ -159,6 +136,8 @@ const tick = () => {
     window.requestAnimationFrame(tick)
 }
 
+// dépendament de la tempéreature a ace moment du jeu on change le skin des insecte qui apparaissent
+
 const weatherMinion = () => {
 
     let weatherbug = "./img/bugs/SwoopingBat.gif";
@@ -175,31 +154,56 @@ const weatherMinion = () => {
 
 const gameOn = () => {
 
-    // Pour la souris 
+    // Pour avoir les x et y de la souris pour que les missile et le vaisseau pointe au bon endroit
     document.onmousemove = (e) => {
         xChase = e.x
         yChase = e.y
-
-        //console.log(xChase)
-        //console.log(yChase)
     }
 
-    // Pour les event clavier pour la température
+    // Les event clavier pour la température
+    // fleche en haut on monte la temperature de 5 degres et on 
     document.onkeydown = (event) => {
+        console.log(currentWeather.apparentTemperature)
         if (event.code === "ArrowUp") {
             currentWeather.apparentTemperature +=5
             menuMeteo.textContent = "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature
-            console.log("La température monte!! : " + currentWeather.apparentTemperature);
+            // console.log("La température monte!! : " + currentWeather.apparentTemperature)
+            console.log(currentWeather)
             
         }
         if (event.code === "ArrowDown") {
             currentWeather.apparentTemperature -=5
             menuMeteo.textContent = "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature
-            console.log("La température descend!! : " + currentWeather.apparentTemperature);
+            // console.log("La température descend!! : " + currentWeather.apparentTemperature)
+        }
+
+        // Pour quitter le jeu si le Quitter est désactivé (il est désactivé par default)
+
+        if(event.code === "Escape"){
+            window.location.href = "index.html";
+        }
+
+        // pour faire neiger et spawn 1 mawingBeaver
+        if(event.key.toLowerCase() === "b"){
+            if(currentWeather.snowfall == 0){
+                currentWeather.snowfall = 1
+            }
+            else{
+                currentWeather.snowfall = 0
+            }
+            // console.log(currentWeather.snowfall)
         }
     }
-    
 
+    
+    
+}
+
+
+// Fonction appelé par la mort d'un missile_chaud ou une boule_de_froid qui change la temperature
+export const modificatioTemperenture = (value) => {
+    currentWeather.apparentTemperature += value
+    menuMeteo.textContent = "La meteo temperature en celsius est de : " + currentWeather.apparentTemperature
 }
 
 

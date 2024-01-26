@@ -1,4 +1,4 @@
-
+// ici pour setup le numero du niveau choisi et que meteo.html et index.html y est accès
 export const chooseLvl = no => {
     console.log(no)
     localStorage.setItem("lvlnumb", no);
@@ -6,12 +6,14 @@ export const chooseLvl = no => {
     window.location.href = "index.html";	
 }
 
-// vieux lab des monstres
+// code de Fred dans "05 - Exercice - Créer un bundle"
 
 // Permet de faire une rotation d'un élément pour un angle donné.
 // Exemple : rotateElement(document.getElementById("elem"), 45).
 //			 Prend le DIV#elem dans son angle original (0) et fait une
 //			 rotation de 45 degré.
+
+
 export const rotateElement = (node, angle) => {
     let properties = ['transform'];
     let p = null;

@@ -1,17 +1,18 @@
-
 import {rotateElement, getElementAngle} from "../util"
 
 import { shipPosX,shipPosY } from "./ship"
-
-import { xChase,yChase } from "../page-meteo"
 
 import {TiledImage} from '../tiledImage'
 
 import { bulletsList} from "../page-meteo"
 
+import {modificatioTemperenture} from "../page-meteo"
+
 
 export class Bullet{
-    constructor(x,y){
+    constructor(x,y,skin,indiceChaleur,colPourSpritesheet){
+
+        this.tempVal = indiceChaleur
 
         this.alive = true
 
@@ -44,16 +45,16 @@ export class Bullet{
 
         //les variable pour la TiledImage 
 
-        let colCount =  3
+        let colCount = colPourSpritesheet
 		let rowCount = 1
 		let refreshDelay = 5 // pour faire ub call back a l'animation selon une variable (un peu comme speed)
 		let loopColummn = true // Savoir quand on veut bouger horizontalement ou verticalement (dans le sprite sheet)
 		let scale = 2.0
 
-        this.tiledImage = new TiledImage("./img/bullets/missile_chaud.png",colCount,rowCount,refreshDelay,loopColummn,scale, this.node)
+        this.tiledImage = new TiledImage(skin,colCount,rowCount,refreshDelay,loopColummn,scale, this.node)
 
         this.tiledImage.changeRow(0)
-		this.tiledImage.changeMinMaxInterval(0,2) 
+		this.tiledImage.changeMinMaxInterval(0,(colPourSpritesheet-1)) 
 
     }
 
@@ -82,18 +83,9 @@ export class Bullet{
             }
 		}
 
-		// if (this.currentPosY < this.cibleY) {
-        //     this.currentPosY += this.moveStep
-		// }
-		// else if (this.currentPosY > this.cibleY) {
-        //     this.currentPosY -= this.moveStep
-		// }
-
         this.currentPosX += this.velocityX
         this.currentPosY += this.velocityY
 
-        // this.node.style.left = this.currentPosX + 'px'       
-        // this.node.style.top = this.currentPosY + 'px'
         this.tiledImage.tick(this.currentPosX, this.currentPosY)
 
         let angle = getElementAngle(this.currentPosX, this.currentPosY, this.cibleX, this.cibleY)
@@ -106,10 +98,10 @@ export class Bullet{
     }
 
     cible_atteinte() {
-        console.log("Toucher manqué")
         this.node.remove()
         let index = bulletsList.indexOf(this);
         bulletsList.splice(index,1)
+        modificatioTemperenture(this.tempVal)
     }
     
 }
